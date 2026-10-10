@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/CryptoPriceAggregator.Api/CryptoPriceAggregator.Api.csproj" />
+  <Project Path="src/CryptoPriceAggregator.Application/CryptoPriceAggregator.Application.csproj" />
+  <Project Path="src/CryptoPriceAggregator.Domain/CryptoPriceAggregator.Domain.csproj" />
+  <Project Path="src/CryptoPriceAggregator.Infrastructure/CryptoPriceAggregator.Infrastructure.csproj" />
+</Solution>
