@@ -1,0 +1,141 @@
+<main class="page">
+  <header class="page-header">
+    <div class="eyebrow">Market data</div>
+    <h1>Crypto Price Aggregator</h1>
+    <p>View an hourly average from Bitstamp and Bitfinex, then explore saved prices.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="current-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="current-heading">Aggregated price</h2>
+        <p>Choose an instrument and an hourly UTC timestamp.</p>
+      </div>
+    </div>
+    <div class="fields aggregated-fields">
+      <label>Instrument
+        <input class="form-control" type="text" [(ngModel)]="instrument" placeholder="BTC/USD" autocomplete="off" />
+      </label>
+      <label>Date (UTC)
+        <input class="form-control" type="date" [max]="todayUtc" [(ngModel)]="timestampDate" />
+      </label>
+      <label>Hour (UTC)
+        <select class="form-control" [(ngModel)]="timestampHour">
+          @for (hour of hours; track hour) {
+            <option [value]="hour">{{ hour }}</option>
+          }
+        </select>
+      </label>
+      <button class="form-control action-button" type="button" (click)="getAggregated()" [disabled]="aggregatedLoading">
+        {{ aggregatedLoading ? 'Loading price…' : 'Get Aggregated Price' }}
+      </button>
+    </div>
+    @if (aggregatedError) {
+      <p class="message error" role="alert">{{ aggregatedError }}</p>
+    }
+    @if (aggregatedLoading) {
+      <p class="message" role="status">Fetching prices…</p>
+    }
+    @if (aggregated; as result) {
+      <div class="result">
+        <div class="result-top">
+          <span>Average price</span>
+          <span class="badge">{{ result.isFromCache ? 'Cache' : 'External Providers' }}</span>
+        </div>
+        <div class="price">{{ result.price | number:'1.2-8' }} <span>USD</span></div>
+        <div class="result-meta">
+          <span>{{ result.instrument }}</span>
+          <span>{{ result.timestampUtc | date:'medium':'UTC' }} UTC</span>
+        </div>
+      </div>
+      <h3>Source prices</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Source</th>
+              <th scope="col" class="numeric">Price (USD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (source of result.sourcePrices; track source.sourceName) {
+              <tr>
+                <td>{{ source.sourceName }}</td>
+                <td class="numeric">{{ source.price | number:'1.2-8' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+
+  <section class="panel" aria-labelledby="history-heading">
+    <div class="section-heading">
+      <div>
+        <h2 id="history-heading">Price history</h2>
+        <p>Browse previously saved hourly prices.</p>
+      </div>
+    </div>
+    <div class="fields history-fields">
+      <label>From date (UTC)
+        <input class="form-control" type="date" [max]="todayUtc" [(ngModel)]="fromDate" />
+      </label>
+      <label>From hour (UTC)
+        <select class="form-control" [(ngModel)]="fromHour">
+          @for (hour of hours; track hour) {
+            <option [value]="hour">{{ hour }}</option>
+          }
+        </select>
+      </label>
+      <label>To date (UTC)
+        <input class="form-control" type="date" [max]="todayUtc" [(ngModel)]="toDate" />
+      </label>
+      <label>To hour (UTC)
+        <select class="form-control" [(ngModel)]="toHour">
+          @for (hour of hours; track hour) {
+            <option [value]="hour">{{ hour }}</option>
+          }
+        </select>
+      </label>
+      <button class="form-control action-button" type="button" (click)="getHistory()" [disabled]="historyLoading">
+        {{ historyLoading ? 'Loading history…' : 'Get Price History' }}
+      </button>
+    </div>
+    @if (historyError) {
+      <p class="message error" role="alert">{{ historyError }}</p>
+    }
+    @if (historyLoading) {
+      <p class="message" role="status">Loading saved prices…</p>
+    }
+    @if (history; as records) {
+      @if (records.items.length === 0) {
+        <p class="empty">No saved prices were found for this time range.</p>
+      }
+      @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Timestamp (UTC)</th>
+                <th scope="col" class="numeric">Aggregated Price</th>
+                <th scope="col" class="numeric">Bitstamp</th>
+                <th scope="col" class="numeric">Bitfinex</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of records.items; track item.timestampUtc) {
+                <tr>
+                  <td>{{ item.timestampUtc | date:'medium':'UTC' }}</td>
+                  <td class="numeric">{{ item.price | number:'1.2-8' }}</td>
+                  <td class="numeric">{{ sourcePrice(item.sourcePrices, 'Bitstamp') | number:'1.2-8' }}</td>
+                  <td class="numeric">{{ sourcePrice(item.sourcePrices, 'Bitfinex') | number:'1.2-8' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+</main>

@@ -3,4 +3,5 @@
   <Project Path="src/CryptoPriceAggregator.Application/CryptoPriceAggregator.Application.csproj" />
   <Project Path="src/CryptoPriceAggregator.Domain/CryptoPriceAggregator.Domain.csproj" />
   <Project Path="src/CryptoPriceAggregator.Infrastructure/CryptoPriceAggregator.Infrastructure.csproj" />
+  <Project Path="tests/CryptoPriceAggregator.Application.Tests/CryptoPriceAggregator.Application.Tests.csproj" />
 </Solution>
